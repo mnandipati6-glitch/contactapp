@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f4f4f4;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 420px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        ul {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Contact Manager</h2>
+
+        <input type="text" id="name" placeholder="Enter name">
+        <input type="email" id="email" placeholder="Enter email">
+        <input type="text" id="phone" placeholder="Enter phone number">
+        <button onclick="addContact()">Add Contact</button>
+
+        <h3>Saved Contacts</h3>
+        <ul id="contactList"></ul>
+    </div>
+
+    <script>
+        async function loadContacts() {
+            const response = await fetch('/contacts');
+            const contacts = await response.json();
+
+            const contactList = document.getElementById('contactList');
+            contactList.innerHTML = '';
+
+            contacts.forEach(contact => {
+                const li = document.createElement('li');
+                li.textContent =
+                    contact.name + ' - ' +
+                    contact.email + ' - ' +
+                    (contact.phone || '');
+                contactList.appendChild(li);
+            });
+        }
+
+        async function addContact() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            await fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, phone })
+            });
+
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+
+            loadContacts();
+        }
+
+        loadContacts();
+    </script>
+</body>
+</html>
