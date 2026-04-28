@@ -73,7 +73,7 @@
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
 
-            await fetch('/add', {
+            await fetch('/contacts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
